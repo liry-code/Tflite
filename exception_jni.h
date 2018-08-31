@@ -28,14 +28,24 @@ using namespace std;
 // delete throwException function
 
 
-class BufferErrorReporter{
+class BufferErrorReporter: public tflite::ErrorReporter{
  public:
     // BufferErrorReporter(int limit);
     /** LiYu*/
     BufferErrorReporter(string exceptInfo){cout << exceptInfo << endl;}; 
 
     // virtual ~BufferErrorReporter();
-    // int Report(const char* format, va_list args);
+    int Report(const char* format, va_list args) override {
+        int size = 0;
+        if (start_idx_ < end_idx_) {
+            size = vsnprintf(buffer_ + start_idx_, end_idx_ - start_idx_, format, args);
+          }
+        start_idx_ += size;
+        return size;
+    }
+
+     ~BufferErrorReporter(){}
+private:    
     // const char* CachedErrorMessage();
     // void outInfo();
     string exceptInfo;

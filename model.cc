@@ -30,10 +30,30 @@ namespace tflite {
 // }  // namespace
 
 
-std::unique_ptr<FlatBufferModel> FlatBufferModel::VerifyAndBuildFromFile(
-    const char* filename, TfLiteVerifier* verifier,
-    ErrorReporter* error_reporter) {
-  error_reporter = ValidateErrorReporter(error_reporter);
+// bool JNIFlatBufferVerifier::Verify(const char* data, int length,
+// 		tflite::ErrorReporter* reporter) ;
+// {
+// 	if (!VerifyModel(data, length)) {
+// 		reporter->Report("The model is not a valid Flatbuffer file");
+// 		return false;
+// 	}
+// 	return true;
+// }
+
+
+// bool JNIFlatBufferVerifier::VerifyModel(const void* buf, size_t len){}
+// {
+// 	flatbuffers::Verifier verifier(static_cast<const uint8_t*>(buf), len);
+// 	return VerifyModelBuffer(verifier);
+// }
+
+
+// std::unique_ptr<FlatBufferModel> FlatBufferModel::VerifyAndBuildFromFile(){}
+    // const char* filename, 
+    // JNIFlatBufferVerifier* verifier,
+    // ErrorReporter* error_reporter
+    // ) {
+  // error_reporter = ValidateErrorReporter(error_reporter);
 
 //   std::unique_ptr<FlatBufferModel> model;
 //   auto allocation = GetAllocationFromFile(filename, /*mmap_file=*/true,
@@ -45,8 +65,9 @@ std::unique_ptr<FlatBufferModel> FlatBufferModel::VerifyAndBuildFromFile(
 //   }
 //   model.reset(new FlatBufferModel(allocation.release(), error_reporter));
 //   if (!model->initialized()) model.reset();
-  return nullptr;
-}
+	// cout << "model  VerifyAndBuildFromFile  cc ..." << endl;
+  // return nullptr;
+// }
 
 
 // // Loads a model from `filename`. If `mmap_file` is true then use mmap,

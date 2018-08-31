@@ -23,22 +23,12 @@ using namespace std;
 
 namespace tflite {
 
-// A functor that reports error to supporting system. Invoked similar to
-// printf.
-//
-// Usage:
-//  ErrorReporter foo;
-//  foo.Report("test %d", 5);
-// or
-//  va_list args;
-//  foo.Report("test %d", args); // where args is va_list
-//
-// Subclass ErrorReporter to provide another reporting destination.
-// For example, if you have a GUI program, you might redirect to a buffer
-// that drives a GUI error log box.
+
+
 class ErrorReporter {
  public:
-	virtual ~ErrorReporter();
+	// virtual ~ErrorReporter();
+
 	/**LiYu*/
 	virtual int Report(const char* format, va_list args) = 0;
 	int Report(const char* format, ...){
@@ -49,16 +39,33 @@ class ErrorReporter {
 		cout << "error_reporter Report function ...." << endl;
 		return code;
 	};
+
 	int ReportError(void*, const char* format, ...);
 };
 
 // An error reporter that simplify writes the message to stderr.
 struct StderrReporter : public ErrorReporter {
-  int Report(const char* format, va_list args) override;
+  int Report(const char* format, va_list args){
+  	#ifdef __ANDROID__
+    // On Android stderr is not captured for applications, only for code run from
+    // the shell. Rather than assume all users will set up a custom error
+    // reporter, let's output to logcat here
+    va_list args_for_log;
+    va_copy(args_for_log, args);
+    __android_log_vprint(ANDROID_LOG_ERROR, "tflite", format, args_for_log);
+    va_end(args_for_log);
+  #endif
+    const int result = vfprintf(stderr, format, args);
+    fputc('\n', stderr);
+  return result;
+  }
 };
 
 // Return the default error reporter (output to stderr).
-ErrorReporter* DefaultErrorReporter();
+ErrorReporter* DefaultErrorReporter() {
+	static StderrReporter* error_reporter = new StderrReporter;
+	return error_reporter;
+}
 
 }  // namespace tflite
 

@@ -23,8 +23,14 @@ limitations under the License.
 #include <string.h>
 #include <cstdlib>
 #include <vector>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/mman.h>
 #include "/home/tclxa/TfLite/context.h"
 #include "/home/tclxa/TfLite/error_reporter.h"
+#include "/home/tclxa/TfLite/dhfs.h"
 
 namespace tflite {
 
@@ -47,13 +53,30 @@ class Allocation {
 
 class MMAPAllocation : public Allocation {
  public:
-  MMAPAllocation(const char* filename, ErrorReporter* error_reporter);
-  virtual ~MMAPAllocation();
-  const void* base() const override;
-  size_t bytes() const override;
-  bool valid() const override;
+  // test : MAP_FAILED
+  MMAPAllocation(const char* filename, ErrorReporter* error_reporter)
+  : Allocation(error_reporter), mmapped_buffer_(MAP_FAILED){
+    mmap_fd_ = open(filename, O_RDONLY);
+    if (mmap_fd_ == -1) {
+      error_reporter_->Report("Could not open '%s'.", filename);
+      return; 
+    }
+    struct stat sb;
+    fstat(mmap_fd_, &sb);
+    buffer_size_bytes_ = sb.st_size;
+    mmapped_buffer_ =
+        mmap(nullptr, buffer_size_bytes_, PROT_READ, MAP_SHARED, mmap_fd_, 0);
+    if (mmapped_buffer_ == MAP_FAILED) {
+      error_reporter_->Report("Mmap of '%s' failed.", filename);
+      return;
+    }
+  }
 
-  static bool IsSupported();
+  // virtual ~MMAPAllocation();
+  const void* base() const override{ return mmapped_buffer_; }
+  size_t bytes() const override{ return buffer_size_bytes_; }
+  bool valid() const override{ return mmapped_buffer_ != MAP_FAILED; }
+  static bool IsSupported(){ return true; }
 
  protected:
   // Data required for mmap.

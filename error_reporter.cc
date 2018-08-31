@@ -12,9 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-#include "/home/tclxa/TfLite/error_reporter.h"
+
 #include <cstdarg>
 #include <cstdio>
+#include "/home/tclxa/TfLite/error_reporter.h"
 
 #ifdef __ANDROID__
 #include <android/log.h>
@@ -22,15 +23,14 @@ limitations under the License.
 
 namespace tflite {
 
-ErrorReporter::~ErrorReporter() {}
-
-int ErrorReporter::Report(const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  int code = Report(format, args);
-  va_end(args);
-  return code;
-}
+int ErrorReporter::Report(const char* format, ...){
+    va_list args;
+    va_start(args, format);
+    int code = Report(format, args);
+    va_end(args);
+    cout << "error_reporter Report function ...." << endl;
+    return code;
+  };
 
 // TODO(aselle): Make the name of ReportError on context the same, so
 // we can use the ensure functions w/o a context and w/ a reporter.
@@ -40,26 +40,6 @@ int ErrorReporter::ReportError(void*, const char* format, ...) {
   int code = Report(format, args);
   va_end(args);
   return code;
-}
-
-int StderrReporter::Report(const char* format, va_list args) {
-#ifdef __ANDROID__
-  // On Android stderr is not captured for applications, only for code run from
-  // the shell. Rather than assume all users will set up a custom error
-  // reporter, let's output to logcat here
-  va_list args_for_log;
-  va_copy(args_for_log, args);
-  __android_log_vprint(ANDROID_LOG_ERROR, "tflite", format, args_for_log);
-  va_end(args_for_log);
-#endif
-  const int result = vfprintf(stderr, format, args);
-  fputc('\n', stderr);
-  return result;
-}
-
-ErrorReporter* DefaultErrorReporter() {
-  static StderrReporter* error_reporter = new StderrReporter;
-  return error_reporter;
 }
 
 }  // namespace tflite
