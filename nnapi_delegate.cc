@@ -31,4 +31,10 @@ limitations under the License.
 namespace tflite {
 
 
+#define CHECK_NN(x)                                                     \
+  if (x != ANEURALNETWORKS_NO_ERROR) {                                  \
+    FATAL("Aborting since NNAPI returned failure nnapi_delegate.cc:%d", \
+          __LINE__);                                                    \
+  }
+
 }  // namespace tflite

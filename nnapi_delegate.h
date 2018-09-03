@@ -31,6 +31,34 @@ class ANeuralNetworksCompilation;
 
 namespace tflite {
 
+void logError(const char* format, ...) {
+  // stderr is convenient for native tests, but is not captured for apps
+  va_list args_for_stderr;
+  va_start(args_for_stderr, format);
+  vfprintf(stderr, format, args_for_stderr);
+  va_end(args_for_stderr);
+  fprintf(stderr, "\n");
+  fflush(stderr);
+#ifdef __ANDROID__
+  // produce logcat output for general consumption
+  va_list args_for_log;
+  va_start(args_for_log, format);
+  __android_log_vprint(ANDROID_LOG_ERROR, "tflite", format, args_for_log);
+  va_end(args_for_log);
+#endif
+}
+
+#define FATAL(...)       \
+  logError(__VA_ARGS__); \
+  exit(1);
+
+
+#define CHECK_NN(x)                                                     \
+  if (x != ANEURALNETWORKS_NO_ERROR) {                                  \
+    FATAL("Aborting since NNAPI returned failure nnapi_delegate.cc:%d", \
+          __LINE__);                                                    \
+  }
+
 class NNAPIAllocation : public tflite::MMAPAllocation {
  public:
   NNAPIAllocation(const char* filename, ErrorReporter* error_reporter)
