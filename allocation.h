@@ -28,7 +28,6 @@ limitations under the License.
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/mman.h>
-#include "/home/tclxa/TfLite/context.h"
 #include "/home/tclxa/TfLite/error_reporter.h"
 #include "/home/tclxa/TfLite/dhfs.h"
 

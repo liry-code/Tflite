@@ -25,7 +25,6 @@ limitations under the License.
 #include <vector>
 
 #include "/home/tclxa/TfLite/allocation.h"
-#include "/home/tclxa/TfLite/context.h"
 #include "/home/tclxa/TfLite/error_reporter.h"
 // #include "tensorflow/contrib/lite/memory_planner.h"
 // #include "tensorflow/contrib/lite/profiling/profiler.h"

@@ -20,7 +20,6 @@ limitations under the License.
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "/home/tclxa/TfLite/allocation.h"
-#include "/home/tclxa/TfLite/context.h"
 #include "/home/tclxa/TfLite/error_reporter.h"
 #include "/home/tclxa/TfLite/NeuralNetworksShim.h"
 // #include "/home/tclxa/TfLite/interpreter.h"

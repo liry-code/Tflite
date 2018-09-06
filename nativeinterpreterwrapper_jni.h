@@ -11,21 +11,13 @@
 #include <memory>
 #include "/home/tclxa/TfLite/model.h"
 #include "/home/tclxa/TfLite/exception_jni.h"
-#include "/home/tclxa/TfLite/context.h"
 #include "/home/tclxa/TfLite/error_reporter.h"
 #include "/home/tclxa/TfLite/interpreter.h"
-#include "/home/tclxa/TfLite/register.h"
 // #include "tensorflow/contrib/lite/java/src/main/native/tensor_jni.h"
 
 using namespace std;
 
 namespace tflite{
-
-  // extern std::unique_ptr<OpResolver> CreateOpResolver();
-  std::unique_ptr<OpResolver> CreateOpResolver() {  // NOLINT
-    return std::unique_ptr<tflite::ops::builtin::BuiltinOpResolver>(
-      new tflite::ops::builtin::BuiltinOpResolver());
-  }
 
 } // namespace
 
@@ -95,7 +87,7 @@ std::unique_ptr<tflite::Interpreter> createInterpreter(string model_file,
   if (error_reporter == nullptr) return 0;
   std::unique_ptr<tflite::FlatBufferModel> model = createModel(error_reporter, model_file);
   if (model == nullptr) return 0;
-  auto resolver = ::tflite::CreateOpResolver();
+  // auto resolver = ::tflite::CreateOpResolver();
   // std::unique_ptr<tflite::Interpreter> interpreter;
   // TfLiteStatus status = tflite::InterpreterBuilder(*model, *(resolver.get()))(
   //     &interpreter, static_cast<int>(num_threads));
@@ -118,6 +110,114 @@ std::unique_ptr<tflite::Interpreter> createInterpreter(string model_file,
   // return interpreter;
   cout << "create interpreter ..." << endl;
   return NULL;
+}
+
+
+void* run(long interpreter_handle, long error_handle,
+    /*jobjectArray sizes, jintArray data_types,*/ int nums_of_bytes[],
+    /*jobjectArray values, jobject wrapper,*/ bool memory_allocated) {
+
+  tflite::Interpreter* interpreter = nullptr;
+  //     convertLongToInterpreter(env, interpreter_handle);
+  // if (interpreter == nullptr) return nullptr;
+
+  BufferErrorReporter* error_reporter = createErrorReporter();
+  if (error_reporter == nullptr) return nullptr;
+
+  // const int input_size = env->GetArrayLength(sizes);
+  // // validates inputs
+  // TfLiteStatus status = checkInputs(env, interpreter, input_size, data_types,
+  //                                   nums_of_bytes, values, sizes);
+  // if (status != kTfLiteOk) return nullptr;
+  // if (!memory_allocated ||
+  //     !areInputDimensionsTheSame(env, interpreter, input_size, sizes)) {
+  //   // resizes inputs
+  //   status = resizeInputs(env, interpreter, input_size, sizes);
+  //   if (status != kTfLiteOk) {
+  //     throwException(env, kNullPointerException, "Can not resize the input: %s",
+  //                    error_reporter->CachedErrorMessage());
+  //     return nullptr;
+  //   }
+  //   // allocates memory
+  //   status = interpreter->AllocateTensors();
+  //   if (status != kTfLiteOk) {
+  //     throwException(env, kNullPointerException,
+  //                    "Can not allocate memory for the given inputs: %s",
+  //                    error_reporter->CachedErrorMessage());
+  //     return nullptr;
+  //   }
+  // }
+  // // sets inputs
+  // status = setInputs(env, interpreter, input_size, data_types, nums_of_bytes,
+  //                    values);
+  // if (status != kTfLiteOk) return nullptr;
+  // timespec beforeInference = ::tflite::getCurrentTime();
+  // // runs inference
+  // if (interpreter->Invoke() != kTfLiteOk) {
+  //   throwException(env, kIllegalArgumentException,
+  //                  "Failed to run on the given Interpreter: %s",
+  //                  error_reporter->CachedErrorMessage());
+  //   return nullptr;
+  // }
+  // timespec afterInference = ::tflite::getCurrentTime();
+  // jclass wrapper_clazz = env->GetObjectClass(wrapper);
+  // jfieldID fid =
+  //     env->GetFieldID(wrapper_clazz, "inferenceDurationNanoseconds", "J");
+  // if (env->ExceptionCheck()) {
+  //   env->ExceptionClear();
+  // } else if (fid != nullptr) {
+  //   env->SetLongField(
+  //       wrapper, fid,
+  //       ::tflite::timespec_diff_nanoseconds(&beforeInference, &afterInference));
+  // }
+  // // returns outputs
+  // const std::vector<int>& results = interpreter->outputs();
+  // if (results.empty()) {
+  //   throwException(env, kIllegalArgumentException,
+  //                  "The Interpreter does not have any outputs.");
+  //   return nullptr;
+  // }
+  // jlongArray outputs = env->NewLongArray(results.size());
+  // size_t size = results.size();
+  // for (int i = 0; i < size; ++i) {
+  //   TfLiteTensor* source = interpreter->tensor(results[i]);
+  //   jlong output = reinterpret_cast<jlong>(source);
+  //   env->SetLongArrayRegion(outputs, i, 1, &output);
+  // }
+  // return outputs;
+}
+
+
+int* getInputDims(){
+  //   JNIEnv* env, jclass clazz, jlong handle, jint input_idx, jint num_bytes) {
+  // tflite::Interpreter* interpreter = convertLongToInterpreter(env, handle);
+  // if (interpreter == nullptr) return nullptr;
+  // const int idx = static_cast<int>(input_idx);
+  // if (input_idx < 0 || input_idx >= interpreter->inputs().size()) {
+  //   throwException(env, kIllegalArgumentException,
+  //                  "Out of range: Failed to get %d-th input out of %d inputs",
+  //                  input_idx, interpreter->inputs().size());
+  //   return nullptr;
+  // }
+  // TfLiteTensor* target = interpreter->tensor(interpreter->inputs()[idx]);
+  // int size = target->dims->size;
+  // if (num_bytes >= 0) {  // verifies num of bytes matches if num_bytes if valid.
+  //   int expected_num_bytes = elementByteSize(target->type);
+  //   for (int i = 0; i < size; ++i) {
+  //     expected_num_bytes *= target->dims->data[i];
+  //   }
+  //   if (num_bytes != expected_num_bytes) {
+  //     throwException(env, kIllegalArgumentException,
+  //                    "Failed to get input dimensions. %d-th input should have"
+  //                    " %d bytes, but found %d bytes.",
+  //                    idx, expected_num_bytes, num_bytes);
+  //     return nullptr;
+  //   }
+  // }
+  // jintArray outputs = env->NewIntArray(size);
+  // env->SetIntArrayRegion(outputs, 0, size, &(target->dims->data[0]));
+  // return outputs;
+  return nullptr;
 }
 
 #endif /* NATIVEINTERPRETERWRAPPER_JNI_H_ */

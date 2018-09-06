@@ -27,19 +27,19 @@ std::unique_ptr<Allocation> GetAllocationFromFile(const char* filename,
                                                   ErrorReporter* error_reporter,
                                                   bool use_nnapi) {
   std::unique_ptr<Allocation> allocation;
-  // if (mmap_file && tflite::MMAPAllocation::IsSupported()) {
-  //   if (use_nnapi && tflite::NNAPIDelegate::IsSupported()){
-  //     allocation.reset(new NNAPIAllocation(filename, error_reporter));
-  //     cout << "issuporter if " << endl;
-  //   }
-  //   else{
-  //     allocation.reset(new MMAPAllocation(filename, error_reporter));
-  //     cout << "Issupported else " << endl;
-  //   }
-  // } else {
-  //   allocation.reset(new FileCopyAllocation(filename, error_reporter));
-  //   cout << "filecopyallocation else " << endl;
-  // }
+  if (mmap_file && tflite::MMAPAllocation::IsSupported()) {
+    if (use_nnapi && tflite::NNAPIDelegate::IsSupported()){
+      allocation.reset(new NNAPIAllocation(filename, error_reporter));
+      cout << "issuporter if " << endl;
+    }
+    else{
+      allocation.reset(new MMAPAllocation(filename, error_reporter));
+      cout << "Issupported else " << endl;
+    }
+  } else {
+    allocation.reset(new FileCopyAllocation(filename, error_reporter));
+    cout << "filecopyallocation else " << endl;
+  }
   allocation.reset(new FileCopyAllocation(filename, error_reporter));
   if(allocation ==  nullptr){
     cout << "create Allocation faild ..." << endl;

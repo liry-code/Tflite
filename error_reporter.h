@@ -17,7 +17,6 @@ limitations under the License.
 
 #include <iostream>
 #include <cstdarg>
-#include "/home/tclxa/TfLite/context.h"
 using namespace std;
 
 
