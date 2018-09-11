@@ -30,6 +30,7 @@ class ErrorReporter {
 
 	/**LiYu*/
 	virtual int Report(const char* format, va_list args) = 0;
+  // int Report(const char* format, ...);
 	int Report(const char* format, ...){
 		va_list args;
 		va_start(args, format);
@@ -39,7 +40,7 @@ class ErrorReporter {
 		return code;
 	};
 
-	int ReportError(void*, const char* format, ...);
+	// int ReportError(void*, const char* format, ...);
 };
 
 // An error reporter that simplify writes the message to stderr.

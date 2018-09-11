@@ -15,7 +15,7 @@ limitations under the License.
 
 #include <cstdarg>
 #include <cstdio>
-#include "/home/tclxa/TfLite/error_reporter.h"
+#include "error_reporter.h"
 
 #ifdef __ANDROID__
 #include <android/log.h>
@@ -23,23 +23,13 @@ limitations under the License.
 
 namespace tflite {
 
-int ErrorReporter::Report(const char* format, ...){
-    va_list args;
-    va_start(args, format);
-    int code = Report(format, args);
-    va_end(args);
-    cout << "error_reporter Report function ...." << endl;
-    return code;
-  };
-
-// TODO(aselle): Make the name of ReportError on context the same, so
-// we can use the ensure functions w/o a context and w/ a reporter.
-int ErrorReporter::ReportError(void*, const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  int code = Report(format, args);
-  va_end(args);
-  return code;
-}
+// int ErrorReporter::Report(const char* format, ...){
+//     va_list args;
+//     va_start(args, format);
+//     int code = Report(format, args);
+//     va_end(args);
+//     cout << "error_reporter Report function ...." << endl;
+//     return code;
+//   };
 
 }  // namespace tflite

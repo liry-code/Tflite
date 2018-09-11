@@ -4,8 +4,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "/home/tclxa/TfLite/allocation.h"
-#include "/home/tclxa/TfLite/error_reporter.h"
+#include "allocation.h"
+#include "error_reporter.h"
 
 namespace tflite {
 

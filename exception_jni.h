@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <iostream>
 #include <string>
-#include "/home/tclxa/TfLite/error_reporter.h"
+#include "error_reporter.h"
 
 // extern "C"
 using namespace std;

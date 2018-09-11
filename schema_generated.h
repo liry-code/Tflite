@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "/home/tclxa/TfLite/flatbuffers.h"
+#include "flatbuffers.h"
 
 using namespace std;
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "/home/tclxa/TfLite/context.h"
+#include "context.h"
 
 #ifdef __cplusplus
 extern "C" {

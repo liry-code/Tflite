@@ -3,7 +3,7 @@
 //#include <stdlib.h>
 //#include <string>
 //#include <iostream>
-#include "/home/tclxa/TfLite/exception_jni.h"
+#include "exception_jni.h"
 
 using namespace std;
 

@@ -4,7 +4,7 @@
 #include <cstring>
 #include <iterator>
 
-#include "/home/tclxa/TfLite/compatibility.h"
+#include "compatibility.h"
 
 namespace tflite {
 

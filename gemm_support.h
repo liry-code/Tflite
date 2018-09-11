@@ -1,8 +1,8 @@
 #ifndef TENSORFLOW_CONTRIB_LITE_KERNELS_GEMM_SUPPORT_H_
 #define TENSORFLOW_CONTRIB_LITE_KERNELS_GEMM_SUPPORT_H_
 
-#include "/home/tclxa/TfLite/gemmlowp.h"
-#include "/home/tclxa/TfLite/context.h"
+#include "gemmlowp.h"
+#include "context.h"
 
 namespace tflite {
 namespace gemm_support {

@@ -13,14 +13,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "/home/tclxa/TfLite/nnapi_delegate.h"
+#include "nnapi_delegate.h"
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 // #include "tensorflow/contrib/lite/builtin_op_data.h"
-#include "/home/tclxa/TfLite/error_reporter.h"
-#include "/home/tclxa/TfLite/model.h"
+#include "error_reporter.h"
+#include "model.h"
 // #include "tensorflow/contrib/lite/nnapi/NeuralNetworksShim.h"
 
 #ifdef __ANDROID__

@@ -1,66 +1,63 @@
 #include <iostream>
-#include "/home/tclxa/TfLite/nativeinterpreterwrapper_jni.h"
+#include <fstream>
+#include "nativeinterpreterwrapper_jni.h"
 #include <ctime>
 #include <map>
 #include "context.h"
 #include <ext/hash_map>
+#include "DataType.h"
 
 #define DIX_WIDTH 112
 #define DIX_DEPTH 112
 #define DIX_CHANAL 3
 
-// long inferenceDurationNanoseconds = -1;
 
-// Tensor getInputTensor(int index) {
-//   if (index < 0 || index >= inputTensors.length) {
-//     throw new IllegalArgumentException("Invalid input Tensor index: " + index);
-//   }
-//   Tensor inputTensor = inputTensors[index];
-//   if (inputTensor == null) {
-//     inputTensor =
-//         inputTensors[index] = Tensor.fromHandle(getInputTensor(interpreterHandle, index));
-//   }
-//   return inputTensor;
-// }
-
-
-
-
-void modelCompute(float inputs[1][DIX_WIDTH][DIX_DEPTH][DIX_CHANAL], map<int, float> outputs){
-  int length = sizeof(inputs) / sizeof(inputs[0]);
-  // 存放数据类型
-  int* dataTypes = new int[length];
-  // 将多维数组存为多个一维数组
-  void* sizes = new int[length];
-  int* numsOfBytes = new int[length];
-
-  cout << "length : "<<length << endl;
-
-  for (int i = 0; i < length; ++i) {
-    int[] dims = shapeOf(inputs[i]);
-    // sizes[i] = inputs;
-    // numsOfBytes[i] = dataType.elemByteSize() * numElements(dims);
-  } 
-    // else {
-    //   throw new IllegalArgumentException(
-    //       String.format(
-    //           "%d-th element of the %d inputs is not an array or a ByteBuffer.",
-    //           i, inputs.length));
-    // }
+int numElements(std::vector<int> &vec){
+  int sum = 1;
+  vector<int>::iterator v = vec.begin();
+   while( v != vec.end()) {
+      sum *= *v;
+      v++;
+   }
+  return sum;
 }
 
 
-int* shapeOf(int ) {
-  int size = 3;
-  int* dimensions = new int[size];
-  // fillShape(o, 0, dimensions);
-  return dimensions;
+void modelCompute(){
+  float imgData[2][112][112][3] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+  float output[56*56*2] = {20.2,33.5,33.4};
+  map<int, float> outputs;
+  outputs[0] = 2001.0;
+  
+  std::vector<int> dataTypes;
+  std::vector<int> numsOfBytes;
+  std::vector<std::vector<int>> sizes;
+
+  int length = sizeof(imgData) / sizeof(imgData[0]);
+  for(int i = 0; i<length; i++){
+    // 获取输入数据类型
+    Data* data = new Data(typeid(imgData[i][0][0][0]).name());
+    dataTypes.push_back(data->getNumber());
+    std::vector<int> size;
+    // 输入为数组形式
+    size.push_back(sizeof(imgData) / sizeof(imgData[i]));
+    size.push_back(sizeof(imgData[i]) / sizeof(imgData[i][0]));
+    size.push_back(sizeof(imgData[i][0]) / sizeof(imgData[i][0][0]));
+    size.push_back(sizeof(imgData[i][0][0]) / sizeof(imgData[i][0][0][0]));
+    sizes.push_back(size);
+
+    int numbers = numElements(sizes[i]);
+    cout << numbers << endl;
+    numsOfBytes.push_back(numElements(sizes[i]) * dataTypes[0]);
+  }
+
+  bool memory_allocated = true; 
+  long interpreter_handle = 21345789;
+  long error_handle = 345678909;
+  run(interpreter_handle, error_handle, sizes, dataTypes, numsOfBytes, /*ingData,*/ memory_allocated);
 }
 
-// int[] shapeOf(float inputs[DIX_WIDTH][DIX_DEPTH][DIX_CHANAL]){
 
-//   return NULL;
-// }
 
 
 
@@ -72,24 +69,19 @@ int main(){
 
   string model_file = "/home/tclxa/TCL/NLDF_Bokeh/tmp/mobilenet_quant_v1_224.tflite";
   // createErrorReporter();
-  BufferErrorReporter* errorReporter = createErrorReporter();
+  //BufferErrorReporter* errorReporter = createErrorReporter();
   
   // createModel(model_file)
-  std::unique_ptr<tflite::FlatBufferModel> model = createModel(errorReporter, model_file);
+  //std::unique_ptr<tflite::FlatBufferModel> model = createModel(errorReporter, model_file);
   int num_threads = 1;
   // createInterpreter(model_file, num_threads);
-  tflite::Interpreter* interpreterHandle = nullptr;
+  // tflite::Interpreter* interpreterHandle = nullptr;
 
   // 将输入输出数据存放在Map
   // char imgData[1000] = "dscsd";
-  float imgData[1][DIX_WIDTH][DIX_DEPTH][DIX_CHANAL] = {1,2,3,4,5,6,7,8,9,10};
- 
-  float output[56*56*2] = {20.2,33.5,33.4};
   
-  map<int, float> outputs;
-  outputs[0] = 2001.0;
 
-  modelCompute(imgData, outputs);
+  modelCompute();
 
   time_t endTime = clock();
 

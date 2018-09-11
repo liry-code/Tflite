@@ -12,11 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-#include "tensorflow/contrib/lite/kernels/gemm_support.h"
+#include "gemm_support.h"
 
 #include <memory>
 
-#include "tensorflow/contrib/lite/kernels/op_macros.h"
+#include "op_macros.h"
 
 namespace tflite {
 namespace gemm_support {

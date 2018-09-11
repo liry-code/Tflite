@@ -3,13 +3,13 @@
 
 #include <iostream>
 #include <memory>
-#include "/home/tclxa/TfLite/flatbuffers.h"
-#include "/home/tclxa/TfLite/model.h"
-#include "/home/tclxa/TfLite/allocation.h"
-#include "/home/tclxa/TfLite/error_reporter.h"
-#include "/home/tclxa/TfLite/schema_generated.h"
+#include "flatbuffers.h"
+#include "model.h"
+#include "allocation.h"
+#include "error_reporter.h"
+#include "schema_generated.h"
 #ifndef TFLITE_MCU
-#include "/home/tclxa/TfLite/nnapi_delegate.h"
+#include "nnapi_delegate.h"
 #endif
 
 using namespace std;

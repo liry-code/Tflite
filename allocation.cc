@@ -1,4 +1,4 @@
-#include "/home/tclxa/TfLite/allocation.h"
+#include "allocation.h"
 #include <iostream>
 #include <string>
 #include <sys/stat.h>
@@ -8,8 +8,8 @@
 #include <cstdint>
 #include <cstring>
 #include <utility>
-#include "/home/tclxa/TfLite/context.h"
-#include "/home/tclxa/TfLite/error_reporter.h"
+#include "context.h"
+#include "error_reporter.h"
 using namespace std;
 
 namespace tflite {

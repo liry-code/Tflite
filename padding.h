@@ -1,7 +1,7 @@
 #ifndef PADDING_H_
 #define PADDING_H_
 
-#include "/home/tclxa/TfLite/builtin_op_data.h"
+#include "builtin_op_data.h"
 
 namespace tflite {
 

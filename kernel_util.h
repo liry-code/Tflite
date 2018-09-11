@@ -3,8 +3,8 @@
 
 #include <algorithm>
 
-#include "/home/tclxa/TfLite/builtin_op_data.h"
-#include "/home/tclxa/TfLite/context.h"
+#include "builtin_op_data.h"
+#include "context.h"
 
 namespace tflite {
 

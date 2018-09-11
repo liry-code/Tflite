@@ -47,11 +47,21 @@ typedef struct {
 
 // Given the size (number of elements) in a TfLiteIntArray, calculate its size
 // in bytes.
-int TfLiteIntArrayGetSizeInBytes(int size);
+// int TfLiteIntArrayGetSizeInBytes(int size);
+int TfLiteIntArrayGetSizeInBytes(int size) {
+  static TfLiteIntArray dummy;
+  return sizeof(dummy) + sizeof(dummy.data[0]) * size;
+}
 
 // Create a array of a given `size` (uninitialized entries).
 // This returns a pointer, that you must free using TfLiteIntArrayFree().
-TfLiteIntArray* TfLiteIntArrayCreate(int size);
+// TfLiteIntArray* TfLiteIntArrayCreate(int size);
+TfLiteIntArray* TfLiteIntArrayCreate(int size) {
+  TfLiteIntArray* ret =
+      (TfLiteIntArray*)malloc(TfLiteIntArrayGetSizeInBytes(size));
+  ret->size = size;
+  return ret;
+}
 
 // Check if two tensors are equal. Returns 1 if they are equal, 0 otherwise.
 int TfLiteIntArrayEqual(TfLiteIntArray* a, TfLiteIntArray* b);
@@ -61,7 +71,8 @@ int TfLiteIntArrayEqual(TfLiteIntArray* a, TfLiteIntArray* b);
 TfLiteIntArray* TfLiteIntArrayCopy(TfLiteIntArray* src);
 
 // Free memory of array `v`.
-void TfLiteIntArrayFree(TfLiteIntArray* v);
+// void TfLiteIntArrayFree(TfLiteIntArray* v);
+void TfLiteIntArrayFree(TfLiteIntArray* v){free(v);} 
 
 
 #define TF_LITE_ENSURE_MSG(context, value, msg)            \
@@ -130,7 +141,6 @@ typedef struct {
   int32_t zero_point;
 } TfLiteQuantizationParams;
 
-// A union of pointers that points to memory for a given tensor.
 typedef union {
   int* i32;
   int64_t* i64;
@@ -151,13 +161,9 @@ typedef enum {
   kTfLiteDynamic,
 } TfLiteAllocationType;
 
-// The delegates should use zero or positive integers to represent handles.
-// -1 is reserved from unallocated status.
 typedef int TfLiteBufferHandle;
 const TfLiteBufferHandle kTfLiteNullBufferHandle = -1;
 
-// An tensor in the interpreter system which is a wrapper around a buffer of
-// data including a dimensionality (or NULL if not currently defined).
 typedef struct {
   TfLiteType type;
   TfLitePtrUnion data;
@@ -179,6 +185,8 @@ typedef struct {
   bool is_variable;
 } TfLiteTensor;
 
+
+
 void TfLiteTensorDataFree(TfLiteTensor* t);
 
 // Free memory of tensor `t`;
@@ -191,7 +199,19 @@ void TfLiteTensorReset(TfLiteType type, const char* name, TfLiteIntArray* dims,
                        const void* allocation, bool is_variable,
                        TfLiteTensor* tensor);
 
-void TfLiteTensorRealloc(size_t num_bytes, TfLiteTensor* tensor);
+// void TfLiteTensorRealloc(size_t num_bytes, TfLiteTensor* tensor);
+void TfLiteTensorRealloc(size_t num_bytes, TfLiteTensor* tensor) {
+  if (tensor->allocation_type != kTfLiteDynamic) {
+    return;
+  }
+  if (!tensor->data.raw) {
+    /*LiYu*/ 
+    tensor->data.raw = (char *)malloc(num_bytes);
+  } else if (num_bytes > tensor->bytes) {
+    tensor->data.raw = (char *)realloc(tensor->data.raw, num_bytes);
+  }
+  tensor->bytes = num_bytes;
+}
 
 typedef struct {
   TfLiteIntArray* inputs;
