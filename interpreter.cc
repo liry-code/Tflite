@@ -20,16 +20,10 @@ limitations under the License.
 #include <cstdint>
 #include <cstring>
 
-#include "arena_planner.h"
-#include "context.h"
 // #include "tensorflow/contrib/lite/context_util.h"
-#include "error_reporter.h"
-#include "graph_info.h"
-#include "memory_planner.h"
 #include "nnapi_delegate.h"
 // #include "tensorflow/contrib/lite/profiling/profiler.h"
 // #include "tensorflow/contrib/lite/schema/schema_generated.h"
-#include "tf_util.h"
 
 namespace tflite {
 namespace {

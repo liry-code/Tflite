@@ -23,13 +23,24 @@ limitations under the License.
 
 namespace tflite {
 
-// int ErrorReporter::Report(const char* format, ...){
-//     va_list args;
-//     va_start(args, format);
-//     int code = Report(format, args);
-//     va_end(args);
-//     cout << "error_reporter Report function ...." << endl;
-//     return code;
-//   };
+	int ErrorReporter::Report(const char* format, ...){
+		va_list args;
+		va_start(args, format);
+		int code = Report(format, args);
+		va_end(args);
+		cout << "error_reporter Report function ...." << endl;
+		return code;
+	};
+
+	ErrorReporter* DefaultErrorReporter() {
+		static StderrReporter* error_reporter = new StderrReporter;
+		return error_reporter;
+	}
+
+	int StderrReporter::Report(const char* format, va_list args) {
+		const int result = vfprintf(stderr, format, args);
+		fputc('\n', stderr);
+		return result;
+	}
 
 }  // namespace tflite

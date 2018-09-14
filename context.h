@@ -1,5 +1,5 @@
-#ifndef TENSORFLOW_CONTRIB_LITE_CONTEXT_H_
-#define TENSORFLOW_CONTRIB_LITE_CONTEXT_H_
+#ifndef CONTEXT_H_
+#define CONTEXT_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -48,20 +48,12 @@ typedef struct {
 // Given the size (number of elements) in a TfLiteIntArray, calculate its size
 // in bytes.
 // int TfLiteIntArrayGetSizeInBytes(int size);
-int TfLiteIntArrayGetSizeInBytes(int size) {
-  static TfLiteIntArray dummy;
-  return sizeof(dummy) + sizeof(dummy.data[0]) * size;
-}
+int TfLiteIntArrayGetSizeInBytes(int size);
 
 // Create a array of a given `size` (uninitialized entries).
 // This returns a pointer, that you must free using TfLiteIntArrayFree().
 // TfLiteIntArray* TfLiteIntArrayCreate(int size);
-TfLiteIntArray* TfLiteIntArrayCreate(int size) {
-  TfLiteIntArray* ret =
-      (TfLiteIntArray*)malloc(TfLiteIntArrayGetSizeInBytes(size));
-  ret->size = size;
-  return ret;
-}
+TfLiteIntArray* TfLiteIntArrayCreate(int size);
 
 // Check if two tensors are equal. Returns 1 if they are equal, 0 otherwise.
 int TfLiteIntArrayEqual(TfLiteIntArray* a, TfLiteIntArray* b);
@@ -72,7 +64,7 @@ TfLiteIntArray* TfLiteIntArrayCopy(TfLiteIntArray* src);
 
 // Free memory of array `v`.
 // void TfLiteIntArrayFree(TfLiteIntArray* v);
-void TfLiteIntArrayFree(TfLiteIntArray* v){free(v);} 
+void TfLiteIntArrayFree(TfLiteIntArray* v);
 
 
 #define TF_LITE_ENSURE_MSG(context, value, msg)            \
@@ -200,18 +192,7 @@ void TfLiteTensorReset(TfLiteType type, const char* name, TfLiteIntArray* dims,
                        TfLiteTensor* tensor);
 
 // void TfLiteTensorRealloc(size_t num_bytes, TfLiteTensor* tensor);
-void TfLiteTensorRealloc(size_t num_bytes, TfLiteTensor* tensor) {
-  if (tensor->allocation_type != kTfLiteDynamic) {
-    return;
-  }
-  if (!tensor->data.raw) {
-    /*LiYu*/ 
-    tensor->data.raw = (char *)malloc(num_bytes);
-  } else if (num_bytes > tensor->bytes) {
-    tensor->data.raw = (char *)realloc(tensor->data.raw, num_bytes);
-  }
-  tensor->bytes = num_bytes;
-}
+void TfLiteTensorRealloc(size_t num_bytes, TfLiteTensor* tensor);
 
 typedef struct {
   TfLiteIntArray* inputs;

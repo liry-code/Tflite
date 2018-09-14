@@ -14,9 +14,13 @@ limitations under the License.
 ==============================================================================*/
 // Main abstraction controlling the tflite interpreter.
 // See context.h for the API for defining operations (TfLiteRegistration).
-#ifndef TENSORFLOW_CONTRIB_LITE_ALLOCATION_H_
-#define TENSORFLOW_CONTRIB_LITE_ALLOCATION_H_
 
+// TENSORFLOW_CONTRIB_LITE_ALLOCATION_H_
+#ifndef ALLOCATION_H_
+#define ALLOCATION_H_
+
+#include "error_reporter.h"
+#include "hdfs.h"
 #include <iostream>
 #include <cstdio>
 #include <memory>
@@ -28,8 +32,7 @@ limitations under the License.
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/mman.h>
-#include "error_reporter.h"
-#include "dhfs.h"
+
 
 namespace tflite {
 
@@ -53,29 +56,11 @@ class Allocation {
 class MMAPAllocation : public Allocation {
  public:
   // test : MAP_FAILED
-  MMAPAllocation(const char* filename, ErrorReporter* error_reporter)
-  : Allocation(error_reporter), mmapped_buffer_(MAP_FAILED){
-    mmap_fd_ = open(filename, O_RDONLY);
-    if (mmap_fd_ == -1) {
-      error_reporter_->Report("Could not open '%s'.", filename);
-      return; 
-    }
-    struct stat sb;
-    fstat(mmap_fd_, &sb);
-    buffer_size_bytes_ = sb.st_size;
-    mmapped_buffer_ =
-        mmap(nullptr, buffer_size_bytes_, PROT_READ, MAP_SHARED, mmap_fd_, 0);
-    if (mmapped_buffer_ == MAP_FAILED) {
-      error_reporter_->Report("Mmap of '%s' failed.", filename);
-      return;
-    }
-  }
-
+  MMAPAllocation(const char* filename, ErrorReporter* error_reporter);
   // virtual ~MMAPAllocation();
-  const void* base() const override{ return mmapped_buffer_; }
-  size_t bytes() const override{ return buffer_size_bytes_; }
-  bool valid() const override{ return mmapped_buffer_ != MAP_FAILED; }
-  static bool IsSupported(){ return true; }
+  const void* base() const override;
+  size_t bytes() const override;
+  bool valid() const override;
 
  protected:
   // Data required for mmap.
@@ -88,44 +73,12 @@ class MMAPAllocation : public Allocation {
 
 class FileCopyAllocation : public Allocation {
  public:
-  FileCopyAllocation(const char* filename, ErrorReporter* error_reporter): Allocation(error_reporter) {
-  // Obtain the file size, using an alternative method that is does not
-  // require fstat for more compatibility.
-  std::unique_ptr<FILE, decltype(&fclose)> file(fopen(filename, "rb"), fclose);
-  if (!file) {
-    error_reporter_->Report("Could not open '%s'.", filename);
-    return;
-  }
-  // TODO(ahentz): Why did you think using fseek here was better for finding
-  // the size?
-  struct stat sb;
-  if (fstat(fileno(file.get()), &sb) != 0) {
-    error_reporter_->Report("Failed to get file size of '%s'.", filename);
-    return;
-  }
-  buffer_size_bytes_ = sb.st_size;
-  std::unique_ptr<char[]> buffer(new char[buffer_size_bytes_]);
-  if (!buffer) {
-    error_reporter_->Report("Malloc of buffer to hold copy of '%s' failed.",
-                            filename);
-    return;
-  }
-  size_t bytes_read =
-      fread(buffer.get(), sizeof(char), buffer_size_bytes_, file.get());
-  if (bytes_read != buffer_size_bytes_) {
-    error_reporter_->Report("Read of '%s' failed (too few bytes read).",
-                            filename);
-    return;
-  }
-  // Versions of GCC before 6.2.0 don't support std::move from non-const
-  // char[] to const char[] unique_ptrs.
-  copied_buffer_.reset(const_cast<char const*>(buffer.release()));
-}
+  FileCopyAllocation(const char* filename, ErrorReporter* error_reporter);
   // virtual ~FileCopyAllocation();
   ~FileCopyAllocation(){}
-  const void* base() const { return copied_buffer_.get(); }
-  size_t bytes() const { return buffer_size_bytes_; }
-  bool valid() const { return copied_buffer_ != nullptr; }
+  const void* base() const override;
+  size_t bytes() const override;
+  bool valid() const override;
 
  private:
     // Data required for mmap.
@@ -152,4 +105,4 @@ class FileCopyAllocation : public Allocation {
 
 }  // namespace tflite
 
-#endif  // TENSORFLOW_CONTRIB_LITE_ALLOCATION_H_
+#endif  // ALLOCATION_H_

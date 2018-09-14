@@ -16,10 +16,6 @@ limitations under the License.
 
 namespace tflite {
 
-TfLiteIntArray* ConvertVectorToTfLiteIntArray(const std::vector<int>& input) {
-  return ConvertArrayToTfLiteIntArray(input.size(), input.data());
-}
-
 TfLiteIntArray* ConvertArrayToTfLiteIntArray(const int rank, const int* dims) {
   TfLiteIntArray* output = TfLiteIntArrayCreate(rank);
   for (size_t i = 0; i < rank; i++) {
@@ -27,6 +23,12 @@ TfLiteIntArray* ConvertArrayToTfLiteIntArray(const int rank, const int* dims) {
   }
   return output;
 }
+
+TfLiteIntArray* ConvertVectorToTfLiteIntArray(const std::vector<int>& input) {
+  return ConvertArrayToTfLiteIntArray(input.size(), input.data());
+}
+
+
 
 bool EqualArrayAndTfLiteIntArray(const TfLiteIntArray* a, const int b_size,
                                  const int* b) {

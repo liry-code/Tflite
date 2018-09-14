@@ -17,7 +17,7 @@
 #ifndef FLATBUFFERS_H_
 #define FLATBUFFERS_H_
 
-#include "base.h"
+#include "fb_base.h"
 
 namespace flatbuffers {
 // Wrapper for uoffset_t to allow safe template specialization.
@@ -1247,7 +1247,7 @@ class FlatBufferBuilder {
   /// @param[in] len The number of elements to serialize.
   /// @return Returns a typed `Offset` into the serialized data indicating
   /// where the vector is stored.
-  template<typename T> Offset<Vector<T>> CreateVector(const T *v, size_t len) {
+  template<typename T> Offset<Vector<T> > CreateVector(const T *v, size_t len) {
     // If this assert hits, you're specifying a template argument that is
     // causing the wrong overload to be selected, remove it.
     AssertScalarT<T>();
@@ -1265,11 +1265,11 @@ class FlatBufferBuilder {
       }
     #endif
     // clang-format on
-    return Offset<Vector<T>>(EndVector(len));
+    return Offset<Vector<T> >(EndVector(len));
   }
 
   template<typename T>
-  Offset<Vector<Offset<T>>> CreateVector(const Offset<T> *v, size_t len) {
+  Offset<Vector<Offset<T> > > CreateVector(const Offset<T> *v, size_t len) {
     StartVector(len, sizeof(Offset<T>));
     for (auto i = len; i > 0;) { PushElement(v[--i]); }
     return Offset<Vector<Offset<T>>>(EndVector(len));

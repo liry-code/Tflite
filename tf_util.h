@@ -18,8 +18,8 @@ limitations under the License.
 // Flatbuffer vectors. These functions can't live in `context.h` since it's pure
 // C.
 
-#ifndef TENSORFLOW_CONTRIB_LITE_UTIL_H_
-#define TENSORFLOW_CONTRIB_LITE_UTIL_H_
+#ifndef TF_UTIL_H_
+#define TF_UTIL_H_
 
 #include <vector>
 #include "context.h"
@@ -28,19 +28,8 @@ namespace tflite {
 
 // Converts a `std::vector` to a `TfLiteIntArray`.
 
-// TfLiteIntArray* ConvertArrayToTfLiteIntArray(const int rank, const int* dims);
-TfLiteIntArray* ConvertArrayToTfLiteIntArray(const int rank, const int* dims) {
-  TfLiteIntArray* output = TfLiteIntArrayCreate(rank);
-  for (size_t i = 0; i < rank; i++) {
-    output->data[i] = dims[i];
-  }
-  return output;
-}
-// TfLiteIntArray* ConvertVectorToTfLiteIntArray(const std::vector<int>& input);
-TfLiteIntArray* ConvertVectorToTfLiteIntArray(const std::vector<int>& input) {
-  return ConvertArrayToTfLiteIntArray(input.size(), input.data());
-}
-
+TfLiteIntArray* ConvertArrayToTfLiteIntArray(const int rank, const int* dims);
+TfLiteIntArray* ConvertVectorToTfLiteIntArray(const std::vector<int>& input);
 
 // Checks whether a `TfLiteIntArray` and an int array have matching elements.
 bool EqualArrayAndTfLiteIntArray(const TfLiteIntArray* a, const int b_size,

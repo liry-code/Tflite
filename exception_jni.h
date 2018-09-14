@@ -32,17 +32,10 @@ class BufferErrorReporter: public tflite::ErrorReporter{
  public:
     // BufferErrorReporter(int limit);
     /** LiYu*/
-    BufferErrorReporter(string exceptInfo){cout << exceptInfo << endl;}; 
+    BufferErrorReporter(string exceptInfo); 
 
     // virtual ~BufferErrorReporter();
-    int Report(const char* format, va_list args) override {
-        int size = 0;
-        if (start_idx_ < end_idx_) {
-            size = vsnprintf(buffer_ + start_idx_, end_idx_ - start_idx_, format, args);
-          }
-        start_idx_ += size;
-        return size;
-    }
+    int Report(const char* format, va_list args) override;
 
      ~BufferErrorReporter(){}
 private:    
